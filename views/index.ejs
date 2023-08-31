@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Windows 11-style Chat</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="chat-box">
+            <ul id="messages"></ul>
+            <form id="form" action="">
+                <div class="input-group">
+                    <span class="icon">&#128100;</span>
+                    <input id="username" type="text" placeholder="Your Name" autocomplete="off" />
+                </div>
+                <div class="input-group">
+                    <span class="icon">&#128172;</span>
+                    <input id="input" type="text" placeholder="Type a message..." autocomplete="off" />
+                    <button id="submit-btn">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function() {
+            var socket = io();
+            var username = '';
+
+            $('#form').submit(function() {
+                var input = $('#input');
+                if (input.val().trim() !== '' && username.trim() !== '') {
+                    var messageData = {
+                        username: username,
+                        message: input.val()
+                    };
+                    // 'chat message'신호와 messageData(데이터)를 서버에게 보낸다.
+                    socket.emit('chat message', messageData);
+                    input.val('');
+                }
+                return false;
+            });
+
+            // chat message라는 신호를 보내고 data라는 값을 받는다.
+            socket.on([여기를 작성해주세요], function([여기를 작성해주세요]) {
+                var messageClass = (data.username === username) ? 'message own-message' : 'message';
+                var messageLi = $('<li class="' + messageClass + '">').text(data.username + ': ' + data.message);
+                $('#messages').append(messageLi);
+                scrollToBottom();
+            });
+
+            $('#username').on('change', function() {
+                username = $(this).val();
+            });
+
+            $('#username').focus();
+
+            function scrollToBottom() {
+                $('#messages').animate({
+                    scrollTop: $('#messages')[0].scrollHeight
+                }, 300);
+            }
+        });
+    </script>
+</body>
+
+</html>
